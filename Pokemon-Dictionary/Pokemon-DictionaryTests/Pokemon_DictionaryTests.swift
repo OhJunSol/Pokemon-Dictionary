@@ -6,31 +6,101 @@
 //
 
 import XCTest
+import Combine
 @testable import Pokemon_Dictionary
 
 class Pokemon_DictionaryTests: XCTestCase {
 
+    private lazy var session: URLSession = {
+        let config = URLSessionConfiguration.default
+//        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
+    }()
+    private lazy var networkService = NetworkService(session: session)
+    private var cancellables: [AnyCancellable] = []
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        //URLProtocol.registerClass(URLProtocolMock.self)
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        cancellables.forEach{ $0.cancel() }
+        cancellables.removeAll()
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func test_loadPokemonNames_finishedSuccessfully() throws {
+        
+        //Given
+        let expectation = self.expectation(description: "networkServiceExpectation")
+        let resource = Resource<PokemonNamesResponse>.pokemonNames()
+        var result: Result<PokemonNamesResponse, Error>?
+        
+        //When
+        networkService.load(resource)
+            .map({ names -> Result<PokemonNamesResponse, Error> in Result.success(names)})
+            .catch({ error -> AnyPublisher<Result<PokemonNamesResponse, Error>, Never> in .just(.failure(error)) })
+            .sink(receiveValue: { value in
+                result = value
+                expectation.fulfill()
+            }).store(in: &cancellables)
+                    
+        // Then
+        self.waitForExpectations(timeout: 3.0, handler: nil)
+        guard case .success(let names) = result else {
+            XCTFail()
+            return
         }
+        XCTAssertEqual(names.pokemonNameInfos.count > 0, true)
     }
 
+    func test_loadPokemonLocations_finishedSuccessfully() throws {
+        
+        //Given
+        let expectation = self.expectation(description: "networkServiceExpectation")
+        let resource = Resource<PokemonLocationsResponse>.pokemonLocations()
+        var result: Result<PokemonLocationsResponse, Error>?
+        
+        //When
+        networkService.load(resource)
+            .map({ locations -> Result<PokemonLocationsResponse, Error> in Result.success(locations)})
+            .catch({ error -> AnyPublisher<Result<PokemonLocationsResponse, Error>, Never> in .just(.failure(error)) })
+            .sink(receiveValue: { value in
+                result = value
+                expectation.fulfill()
+            }).store(in: &cancellables)
+                    
+        // Then
+        self.waitForExpectations(timeout: 3.0, handler: nil)
+        guard case .success(let locations) = result else {
+            XCTFail()
+            return
+        }
+        XCTAssertEqual(locations.pokemonLocationInfos.count > 0, true)
+    }
+    
+    func test_loadPokemon_finishedSuccessfully() throws {
+        
+        //Given
+        let expectation = self.expectation(description: "networkServiceExpectation")
+        let resource = Resource<Pokemon>.pokemon(id: 1)
+        var result: Result<Pokemon, Error>?
+        
+        //When
+        networkService.load(resource)
+            .map({ pokemon -> Result<Pokemon, Error> in Result.success(pokemon)})
+            .catch({ error -> AnyPublisher<Result<Pokemon, Error>, Never> in .just(.failure(error)) })
+            .sink(receiveValue: { value in
+                result = value
+                expectation.fulfill()
+            }).store(in: &cancellables)
+                    
+        // Then
+        self.waitForExpectations(timeout: 3.0, handler: nil)
+                    
+        guard case .success(let pokemon) = result else {
+            XCTFail()
+            return
+        }
+        XCTAssertEqual(pokemon.id == 1, true)
+    }
 }
