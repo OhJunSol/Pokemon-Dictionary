@@ -104,33 +104,6 @@ class Pokemon_DictionaryTests: XCTestCase {
         XCTAssertEqual(pokemon.id == 1, true)
     }
     
-    func test_loadFailedWithRequestError() throws {
-        
-        //Given
-        let url = URL(string: "demo2575987.mockable.io/pokemon_name")!
-        let resource = Resource<PokemonNamesResponse>(url: url)
-        let expectation = self.expectation(description: "networkServiceExpectation")
-        var result: Result<PokemonNamesResponse, Error>?
-        
-        //When
-        networkService.load(resource)
-            .map({ names -> Result<PokemonNamesResponse, Error> in Result.success(names)})
-            .catch({ error -> AnyPublisher<Result<PokemonNamesResponse, Error>, Never> in .just(.failure(error)) })
-            .sink(receiveValue: { value in
-                result = value
-                expectation.fulfill()
-            }).store(in: &cancellables)
-                    
-        // Then
-        self.waitForExpectations(timeout: 3.0, handler: nil)
-        guard case .failure(let error) = result,
-            let networkError = error as? NetworkError,
-            case NetworkError.invalidRequest = networkError else {
-            XCTFail()
-            return
-        }
-    }
-    
     func test_loadFailedWithInternalError() throws {
         
         //Given

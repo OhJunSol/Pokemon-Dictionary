@@ -18,4 +18,5 @@ enum NetworkError: Error {
     case invalidResponse
     case dataLoadingError(statusCode: Int, data: Data)
     case jsonDecodingError(error: Error)
+    case genericError(error: Error)
 }

@@ -21,23 +21,23 @@ final class NetworkService: NetworkServiceType {
         }
         request.cachePolicy = policy
         
-//        if let cachedData = URLCache.shared.cachedResponse(for: request) {
-//            print("Cached data:", cachedData.data)
-//        }
         return session.dataTaskPublisher(for: request)
-            .mapError { _ in NetworkError.invalidRequest }
-            .print()
-            .flatMap { data, response -> AnyPublisher<Data, Error> in
+            .tryMap { data, response -> Data in
                 guard let response = response as? HTTPURLResponse else {
-                    return .fail(NetworkError.invalidResponse)
+                    throw NetworkError.invalidResponse
                 }
 
                 guard 200..<300 ~= response.statusCode else {
-                    return .fail(NetworkError.dataLoadingError(statusCode: response.statusCode, data: data))
+                    throw NetworkError.dataLoadingError(statusCode: response.statusCode, data: data)
                 }
-                return .just(data)
+                return data
             }
             .decode(type: T.self, decoder: JSONDecoder())
+            .mapError { error in
+                (error as? DecodingError) != nil
+                    ? NetworkError.jsonDecodingError(error: error)
+                    : error
+            }
         .eraseToAnyPublisher()
     }
 

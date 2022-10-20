@@ -32,6 +32,7 @@
 		06C15F36290035AE00CD40F2 /* Sprites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C15F35290035AE00CD40F2 /* Sprites.swift */; };
 		06C15F38290035CF00CD40F2 /* Resource + Pokemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C15F37290035CF00CD40F2 /* Resource + Pokemon.swift */; };
 		06C15F4229014F1A00CD40F2 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C15F4129014F1A00CD40F2 /* SearchViewModel.swift */; };
+		06C15F4429019D5B00CD40F2 /* UIKit + Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C15F4329019D5B00CD40F2 /* UIKit + Publisher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 		06C15F35290035AE00CD40F2 /* Sprites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sprites.swift; sourceTree = "<group>"; };
 		06C15F37290035CF00CD40F2 /* Resource + Pokemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Resource + Pokemon.swift"; sourceTree = "<group>"; };
 		06C15F4129014F1A00CD40F2 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		06C15F4329019D5B00CD40F2 /* UIKit + Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIKit + Publisher.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				06C15F13290022A500CD40F2 /* Utils + Publisher.swift */,
+				06C15F4329019D5B00CD40F2 /* UIKit + Publisher.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 				06C15F14290022A500CD40F2 /* Utils + Publisher.swift in Sources */,
 				06C15F4229014F1A00CD40F2 /* SearchViewModel.swift in Sources */,
 				06C15F342900331800CD40F2 /* Pokemon.swift in Sources */,
+				06C15F4429019D5B00CD40F2 /* UIKit + Publisher.swift in Sources */,
 				06C15EE629001F3200CD40F2 /* SearchViewController.swift in Sources */,
 				06C15F322900317100CD40F2 /* Resource + PokemonLocations.swift in Sources */,
 				06C15F2E2900308300CD40F2 /* PokemonLocationsResponse.swift in Sources */,
