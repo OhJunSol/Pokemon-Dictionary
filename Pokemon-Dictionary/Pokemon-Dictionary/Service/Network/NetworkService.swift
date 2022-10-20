@@ -15,10 +15,15 @@ final class NetworkService: NetworkServiceType {
         self.session = session
     }
 
-    func load<T>(_ resource: Resource<T>) -> AnyPublisher<T, Error> {
-        guard let request = resource.request else {
+    func load<T>(_ resource: Resource<T>, policy: URLRequest.CachePolicy = .returnCacheDataElseLoad) -> AnyPublisher<T, Error> {
+        guard var request = resource.request else {
             return .fail(NetworkError.invalidRequest)
         }
+        request.cachePolicy = policy
+        
+//        if let cachedData = URLCache.shared.cachedResponse(for: request) {
+//            print("Cached data:", cachedData.data)
+//        }
         return session.dataTaskPublisher(for: request)
             .mapError { _ in NetworkError.invalidRequest }
             .print()

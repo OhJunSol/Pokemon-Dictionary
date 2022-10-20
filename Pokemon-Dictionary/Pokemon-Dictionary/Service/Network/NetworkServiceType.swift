@@ -10,7 +10,7 @@ import Combine
 
 protocol NetworkServiceType: AnyObject {
 
-    func load<T>(_ resource: Resource<T>) -> AnyPublisher<T, Error>
+    func load<T>(_ resource: Resource<T>, policy: URLRequest.CachePolicy) -> AnyPublisher<T, Error>
 }
 
 enum NetworkError: Error {
