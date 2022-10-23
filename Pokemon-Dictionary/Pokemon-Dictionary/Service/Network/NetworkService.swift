@@ -14,6 +14,23 @@ final class NetworkService: NetworkServiceType {
     init(session: URLSession = URLSession(configuration: URLSessionConfiguration.default)) {
         self.session = session
     }
+    
+    func load(url: URL) -> AnyPublisher<Data, Error> {
+        return session.dataTaskPublisher(for: url)
+            .tryMap { data, response -> Data in
+                guard let response = response as? HTTPURLResponse else {
+                    throw NetworkError.invalidResponse
+                }
+
+                guard 200..<300 ~= response.statusCode else {
+                    throw NetworkError.dataLoadingError(statusCode: response.statusCode, data: data)
+                }
+                
+                guard data.count > 0 else { throw NetworkError.zeroByteResource }
+                return data
+            }
+            .eraseToAnyPublisher()
+    }
 
     func load<T>(_ resource: Resource<T>, policy: URLRequest.CachePolicy = .returnCacheDataElseLoad) -> AnyPublisher<T, Error> {
         guard var request = resource.request else {

@@ -41,7 +41,15 @@ class SearchViewController: UIViewController {
         bind()
     }
     
-    func bind() {
+    private func bind() {
+        viewModel.$error
+            .receive(on: RunLoop.main)
+            .sink {
+                error in
+                print(error?.localizedDescription ?? "")
+                //TODO:- Error Handling
+            }.store(in: &cancellables)
+        
         viewModel.$searchedItems
             .receive(on: RunLoop.main)
             .sink {
@@ -55,12 +63,27 @@ class SearchViewController: UIViewController {
 }
 
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.viewModel.searchedItems.count
     }
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         cell.textLabel?.text = self.viewModel.searchedItems[indexPath.row].name
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.searchController.searchBar.resignFirstResponder()
+        tableView.deselectRow(at: indexPath, animated: true)
+        let id = self.viewModel.searchedItems[indexPath.row].id
+        let names = self.viewModel.items.filter{ $0.id == id }.map{ $0.name }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let pokemonInfoVC = storyboard.instantiateViewController(withIdentifier: "PokemonInfoViewController") as! PokemonInfoViewController
+        let pokemonInfoVM = PokemonInfoViewModel(id: id, names: names)
+        pokemonInfoVC.viewModel = pokemonInfoVM
+        self.present(pokemonInfoVC, animated: false)
+        
     }
 }

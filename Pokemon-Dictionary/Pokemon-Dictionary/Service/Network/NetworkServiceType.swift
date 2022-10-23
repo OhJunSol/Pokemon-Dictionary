@@ -10,6 +10,8 @@ import Combine
 
 protocol NetworkServiceType: AnyObject {
 
+    func load(url: URL) -> AnyPublisher<Data, Error>
+    
     func load<T>(_ resource: Resource<T>, policy: URLRequest.CachePolicy) -> AnyPublisher<T, Error>
 }
 
@@ -19,4 +21,5 @@ enum NetworkError: Error {
     case dataLoadingError(statusCode: Int, data: Data)
     case jsonDecodingError(error: Error)
     case genericError(error: Error)
+    case zeroByteResource
 }

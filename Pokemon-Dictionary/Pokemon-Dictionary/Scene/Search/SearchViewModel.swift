@@ -16,13 +16,13 @@ class SearchViewModel {
     //Error
     @Published var error: Error?
     
-    private var names: [(id:Int, name:String)] = []
+    var items: [(id:Int, name:String)] = []
     
     private lazy var networkService = NetworkService()
     private var cancellables: [AnyCancellable] = []
     
     func search(query: String) {
-        searchedItems = names.filter{ $0.name.localizedCaseInsensitiveContains(query) }
+        searchedItems = items.filter{ $0.name.localizedCaseInsensitiveContains(query) }
     }
     
     func fetchData() {
@@ -35,10 +35,10 @@ class SearchViewModel {
                     self?.error = err
                 }
             } receiveValue: { [weak self] response in
-                self?.names = []
+                self?.items = []
                 response.pokemonNameInfos.forEach { info in
                     info.names.forEach { name in
-                        self?.names.append((id: info.id, name: name))
+                        self?.items.append((id: info.id, name: name))
                     }
                 }
             }.store(in: &cancellables)
