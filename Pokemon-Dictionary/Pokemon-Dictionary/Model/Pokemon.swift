@@ -9,10 +9,10 @@ import Foundation
 
 struct Pokemon {
     let id: Int
-    let height: Int
-    let name: String
-    let weight: Int
-    let sprites: Sprites
+    let height: Int?
+    let name: String?
+    let weight: Int?
+    let sprites: Sprites?
 }
 
 extension Pokemon: Decodable {

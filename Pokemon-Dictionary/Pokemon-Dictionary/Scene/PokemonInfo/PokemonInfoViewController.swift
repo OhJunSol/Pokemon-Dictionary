@@ -1,5 +1,5 @@
 //
-//  PokemonInfoView.swift
+//  PokemonInfoViewController.swift
 //  Pokemon-Dictionary
 //
 //  Created by 오준솔 on 2022/10/22.
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import Combine
 
-//from storyboard
+//with storyboard
 class PokemonInfoViewController: UIViewController {
     
     @IBOutlet weak var nameLabel: UILabel!
@@ -35,6 +35,7 @@ class PokemonInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.mapButton.isHidden = true
         
         bind()
     }
@@ -49,6 +50,13 @@ class PokemonInfoViewController: UIViewController {
             nameText += "\n\(viewModel.names[i])"
         }
         self.nameLabel.text = nameText
+        
+        viewModel.$locations
+            .receive(on: RunLoop.main)
+            .sink { [weak self] locations in
+                guard let self = self else { return }
+                self.mapButton.isHidden = locations.count == 0
+            }.store(in: &cancellables)
         
         viewModel.$image
             .receive(on: RunLoop.main)
@@ -75,6 +83,14 @@ class PokemonInfoViewController: UIViewController {
             }.store(in: &cancellables)
         
         viewModel.fetchData()
+    }
+    
+    @IBAction func mapButtonTouchUpInside(_ sender: Any) {
+        guard let locations = viewModel?.locations else { return }
+        let mapVC = PokemonMapViewController(locations: locations)
+        mapVC.modalPresentationStyle = .fullScreen
+        mapVC.modalTransitionStyle = .crossDissolve
+        self.present(mapVC, animated: true)
     }
     
     @IBAction func okButtonTouchUpInside(_ sender: Any) {
