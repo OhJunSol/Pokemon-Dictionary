@@ -21,16 +21,11 @@ class PokemonInfoViewController: UIViewController {
     
     var viewModel: PokemonInfoViewModel?
     
-    private var cancellables: [AnyCancellable] = []
+    private var cancellables: Set<AnyCancellable> = []
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         modalPresentationStyle = .overFullScreen
-    }
-    
-    deinit {
-        cancellables.forEach{ $0.cancel() }
-        cancellables.removeAll()
     }
     
     override func viewDidLoad() {
