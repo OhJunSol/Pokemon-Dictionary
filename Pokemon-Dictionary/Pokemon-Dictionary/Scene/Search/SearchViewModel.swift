@@ -18,7 +18,12 @@ class SearchViewModel {
     
     var items: [(id:Int, name:String)] = []
     
-    private lazy var networkService = NetworkService()
+    //Network
+    private lazy var session: URLSession = {
+        let config = URLSessionConfiguration.default
+        return URLSession(configuration: config)
+    }()
+    private lazy var networkService = NetworkService(session: session)
     private var cancellables: [AnyCancellable] = []
     
     func search(query: String) {

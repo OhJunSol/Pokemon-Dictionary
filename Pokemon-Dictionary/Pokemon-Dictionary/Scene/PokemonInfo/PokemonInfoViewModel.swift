@@ -21,7 +21,12 @@ class PokemonInfoViewModel {
     //Error
     @Published var error: Error?
     
-    private lazy var networkService = NetworkService()
+    //Network
+    private lazy var session: URLSession = {
+        let config = URLSessionConfiguration.default
+        return URLSession(configuration: config)
+    }()
+    private lazy var networkService = NetworkService(session: session)
     private var cancellables: [AnyCancellable] = []
     
     init(id: Int, names: [String]) {

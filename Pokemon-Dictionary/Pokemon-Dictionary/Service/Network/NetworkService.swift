@@ -11,12 +11,14 @@ import Combine
 final class NetworkService: NetworkServiceType {
     private let session: URLSession
 
-    init(session: URLSession = URLSession(configuration: URLSessionConfiguration.default)) {
+    init(session: URLSession = URLSession(configuration: .ephemeral)) {
         self.session = session
     }
     
-    func load(url: URL) -> AnyPublisher<Data, Error> {
-        return session.dataTaskPublisher(for: url)
+    func load(url: URL, policy: URLRequest.CachePolicy = .returnCacheDataElseLoad) -> AnyPublisher<Data, Error> {
+        var request = URLRequest(url: url)
+        request.cachePolicy = policy
+        return session.dataTaskPublisher(for: request)
             .tryMap { data, response -> Data in
                 guard let response = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse

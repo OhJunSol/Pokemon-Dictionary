@@ -10,7 +10,7 @@ import Combine
 
 protocol NetworkServiceType: AnyObject {
 
-    func load(url: URL) -> AnyPublisher<Data, Error>
+    func load(url: URL, policy: URLRequest.CachePolicy) -> AnyPublisher<Data, Error>
     
     func load<T>(_ resource: Resource<T>, policy: URLRequest.CachePolicy) -> AnyPublisher<T, Error>
 }
