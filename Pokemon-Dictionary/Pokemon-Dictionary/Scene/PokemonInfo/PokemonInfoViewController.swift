@@ -100,6 +100,18 @@ class PokemonInfoViewController: UIViewController {
                 self.heightLabel.text = "Height: \(height)"
             }.store(in: &cancellables)
         
+        viewModel.$error
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] error in
+                guard let self = self,
+                      let error = error else { return }
+                let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .destructive, handler : nil)
+                alert.addAction(okAction)
+                self.present(alert, animated: true, completion: nil)
+            }.store(in: &cancellables)
+        
         viewModel.fetchData()
     }
     
