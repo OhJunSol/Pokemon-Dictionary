@@ -37,6 +37,24 @@ class PokemonInfoViewController: UIViewController {
         super.viewDidLoad()
         self.mapButton.isHidden = true
         
+        mapButton.tapPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] searchText in
+                guard let self = self,
+                      let locations = self.viewModel?.locations else { return }
+                let mapVC = PokemonMapViewController(locations: locations)
+                mapVC.modalPresentationStyle = .fullScreen
+                mapVC.modalTransitionStyle = .crossDissolve
+                self.present(mapVC, animated: true)
+            }.store(in: &cancellables)
+        
+        okButton.tapPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] searchText in
+                guard let self = self else { return }
+                self.dismiss(animated: false)
+            }.store(in: &cancellables)
+        
         bind()
     }
     
@@ -83,18 +101,6 @@ class PokemonInfoViewController: UIViewController {
             }.store(in: &cancellables)
         
         viewModel.fetchData()
-    }
-    
-    @IBAction func mapButtonTouchUpInside(_ sender: Any) {
-        guard let locations = viewModel?.locations else { return }
-        let mapVC = PokemonMapViewController(locations: locations)
-        mapVC.modalPresentationStyle = .fullScreen
-        mapVC.modalTransitionStyle = .crossDissolve
-        self.present(mapVC, animated: true)
-    }
-    
-    @IBAction func okButtonTouchUpInside(_ sender: Any) {
-        self.dismiss(animated: false)
     }
     
 }
